@@ -1,6 +1,9 @@
 import 'dart:io';
 
-List myUsersList = [];
+// ===================================================================
+// TEMPORARY STORAGE (NO JSON FILES)
+// ===================================================================
+List users = [];
 Map? currentUser;
 
 List services = [
@@ -50,7 +53,7 @@ List bookings = [];
 
 void main() {
   while (true) {
-    print("""\n
+    print("""
 =======================
 ||   Skin Clinic App  ||
 =======================
@@ -78,9 +81,9 @@ void main() {
   }
 }
 
-// --------------------------------------------------------------------
+// ===================================================================
 // USER SIGNUP
-// --------------------------------------------------------------------
+// ===================================================================
 signupUser() {
   print("\n====== User Signup ======");
   stdout.write("Enter name: ");
@@ -92,24 +95,21 @@ signupUser() {
   stdout.write("Enter password: ");
   String pass = stdin.readLineSync() ?? '';
 
-  stdout.write("Enter username: ");
-  String username = stdin.readLineSync() ?? '';
-
   Map newUser = {
     "name": name,
     "email": email,
     "password": pass,
-    "username": username,
+    "address": "",
   };
 
-  myUsersList.add(newUser);
+  users.add(newUser);
 
   print("\nSignup successful! You can now login.\n");
 }
 
-// --------------------------------------------------------------------
+// ===================================================================
 // USER LOGIN
-// --------------------------------------------------------------------
+// ===================================================================
 loginUser() {
   print("\n====== Login ======");
   stdout.write("Email: ");
@@ -118,7 +118,7 @@ loginUser() {
   stdout.write("Password: ");
   String pass = stdin.readLineSync() ?? '';
 
-  for (var u in myUsersList) {
+  for (var u in users) {
     if (u['email'] == email && u['password'] == pass) {
       currentUser = u;
       print("\nLogin successful!\n");
@@ -130,12 +130,12 @@ loginUser() {
   print("\nIncorrect email or password.\n");
 }
 
-// --------------------------------------------------------------------
+// ===================================================================
 // USER MENU
-// --------------------------------------------------------------------
+// ===================================================================
 userMenu() {
   while (true) {
-    print("""\n
+    print("""
 ====**===============**===
 ||   Normal User Menu   ||
 ====**===============**===
@@ -144,50 +144,33 @@ userMenu() {
 2. Search Service by ID
 3. Search Service by Name
 4. View My Bookings
-5. Logout
+5. View My Profile
+6. Update My Profile
+7. Logout
 """);
 
     stdout.write("Choose option: ");
     String choice = stdin.readLineSync() ?? '';
 
-    // if (choice == '1') viewAllServices();
-    // else if (choice == '2') searchServiceByID();
-    // else if (choice == '3') searchServiceByName();
-    // else if (choice == '4') viewMyBookings();
-    // else if (choice == '5') {
-    //   currentUser = null;
-    //   print("\nLogged out.\n");
-    //   return;
-    // } else {
-    //   print("Invalid option. Try again.");
-    // }
-
-    switch (choice) {
-      case '1':
-        viewAllServices();
-        break;
-      case '2':
-        searchServiceByID();
-        break;
-      case '3':
-        searchServiceByName();
-        break;
-      case '4':
-        viewMyBookings();
-        break;
-      case '5':
-        currentUser = null;
-        print("\nLogged out.\n");
-        break;
-      default:
-        print("Invalid option. Try again.");
+    if (choice == '1') viewAllServices();
+    else if (choice == '2') searchServiceByID();
+    else if (choice == '3') searchServiceByName();
+    else if (choice == '4') viewMyBookings();
+    else if (choice == '5') viewMyProfile();
+    else if (choice == '6') updateMyProfile();
+    else if (choice == '7') {
+      currentUser = null;
+      print("\nLogged out.\n");
+      return;
+    } else {
+      print("Invalid option. Try again.");
     }
   }
 }
 
-// --------------------------------------------------------------------
+// ===================================================================
 // VIEW ALL SERVICES
-// --------------------------------------------------------------------
+// ===================================================================
 viewAllServices() {
   print("\n======= All Services =======\n");
 
@@ -202,7 +185,7 @@ viewAllServices() {
   if (id == 0) return;
 
   var service = services.firstWhere(
-    (checkServiceid) => checkServiceid['id'] == id,
+    (s) => s['id'] == id,
     orElse: () => null,
   );
 
@@ -214,9 +197,9 @@ viewAllServices() {
   serviceDetail(service);
 }
 
-// --------------------------------------------------------------------
-// SEARCH SERVICE BY ID
-// --------------------------------------------------------------------
+// ===================================================================
+// SEARCH BY ID
+// ===================================================================
 searchServiceByID() {
   stdout.write("\nEnter Service ID: ");
   int id = int.tryParse(stdin.readLineSync() ?? '') ?? -1;
@@ -230,9 +213,9 @@ searchServiceByID() {
   else serviceDetail(s);
 }
 
-// --------------------------------------------------------------------
-// SEARCH SERVICE BY NAME
-// --------------------------------------------------------------------
+// ===================================================================
+// SEARCH BY NAME
+// ===================================================================
 searchServiceByName() {
   stdout.write("\nEnter service name: ");
   String name = stdin.readLineSync()!.toLowerCase();
@@ -262,9 +245,9 @@ searchServiceByName() {
   else serviceDetail(chosen);
 }
 
-// --------------------------------------------------------------------
-// SERVICE DETAIL + READ MORE + BOOKING
-// --------------------------------------------------------------------
+// ===================================================================
+// SERVICE DETAILS + READ MORE + BOOK
+// ===================================================================
 serviceDetail(Map s) {
   bool expanded = false;
 
@@ -299,9 +282,9 @@ serviceDetail(Map s) {
   }
 }
 
-// --------------------------------------------------------------------
-// BOOKING SERVICE
-// --------------------------------------------------------------------
+// ===================================================================
+// BOOK SERVICE (Temporary store)
+// ===================================================================
 bookService(Map s) {
   bookings.add({
     "user": currentUser!['email'],
@@ -313,9 +296,9 @@ bookService(Map s) {
   print("\nService booked successfully!\n");
 }
 
-// --------------------------------------------------------------------
-// VIEW USER BOOKINGS
-// --------------------------------------------------------------------
+// ===================================================================
+// VIEW MY BOOKINGS (BILLS)
+// ===================================================================
 viewMyBookings() {
   print("\n====== My Bookings ======\n");
 
@@ -331,4 +314,43 @@ viewMyBookings() {
   for (var b in my) {
     print("- ${b['service']} — Rs ${b['price']}  (${b['time']})");
   }
+}
+
+// ===================================================================
+// VIEW PROFILE
+// ===================================================================
+viewMyProfile() {
+  print("""
+====== My Profile ======
+
+Name     : ${currentUser!['name']}
+Username : ${currentUser!['username']}
+Email    : ${currentUser!['email']}
+Address  : ${currentUser!['address']}
+""");
+}
+
+// ===================================================================
+// UPDATE PROFILE 
+// ===================================================================
+updateMyProfile() {
+  print("\n====== Update Profile ======");
+
+  stdout.write("New name (press Enter to keep current): ");
+  String name = stdin.readLineSync() ?? '';
+  if (name.isNotEmpty) currentUser!['name'] = name;
+
+  stdout.write("New email (press Enter to keep current): ");
+  String email = stdin.readLineSync() ?? '';
+  if (email.isNotEmpty) currentUser!['email'] = email;
+
+  stdout.write("New address (press Enter to keep current): ");
+  String address = stdin.readLineSync() ?? '';
+  if (address.isNotEmpty) currentUser!['address'] = address;
+  
+  stdout.write("New password (press Enter to keep current): ");
+  String password = stdin.readLineSync() ?? '';
+  if (password.isNotEmpty) currentUser!['password'] = password;
+
+  print("\nProfile updated!\n");
 }
