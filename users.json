@@ -1,0 +1,22 @@
+[
+    {
+        "username": "Hamza",
+        "password": "Hamzaahmed@",
+        "role": "users",
+        "name": "Hamza Ahmed",
+        "email": "hamzaahmed@gmail.com"
+    },
+    {
+        "username": "Doctor",
+        "password": "doctor@",
+        "role": "doctor"
+    },
+    {
+        "name": "Muhammad Hamza Ahmed",
+        "email": "hamzafac2007@gmail.com",
+        "username": "hamzaahmed21",
+        "password": "Hamzaahmed@",
+        "role": "users",
+        "address": ""
+    }
+]
